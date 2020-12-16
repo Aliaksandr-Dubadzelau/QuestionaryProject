@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "name", "activationCode"})})
 @Data(staticConstructor = "of")
 @ToString(includeFieldNames = false)
 @NoArgsConstructor
@@ -24,47 +25,48 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @Column(unique = true)
+    private long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotBlank(message = "Please, fill the field name")
-    @Length(min = 3, max = 50, message = "Name is wrong (3-70)")
+    @Length(min = 3, max = 50, message = "Name is wrong (3-50)")
     private String name;
 
     @Email
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     @NotBlank(message = "Please, fill the field email")
     @Length(min = 3, max = 70, message = "Email is wrong (3-70)")
     private String email;
 
     @Column(nullable = false)
     @NotBlank(message = "Please, fill the field password")
-    @Length(min = 6, max = 50, message = "Password is wrong (6-70)")
+    @Length(min = 6, max = 50, message = "Password is wrong (6-50)")
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"))
     @Column(nullable = false)
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
     @Column(nullable = false)
     private int passwordCode;
 
-    @Column(nullable = false, unique = true)
-    private int activationCode;
+    @Column(nullable = false)
+    private String activationCode;
 
     @Column(nullable = false)
     private boolean activated;
 
     @Column(nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date date;
+    private Date registrationDate;
 
-    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "creator", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private transient List<Test> tests;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private transient List<TestResult> results;
 
     @Override

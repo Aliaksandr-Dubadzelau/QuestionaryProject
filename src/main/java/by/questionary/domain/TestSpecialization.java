@@ -15,11 +15,11 @@ public class TestSpecialization {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    @Column(unique = true)
+    private long id;
 
     @OneToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "test_id")
-    @Column(nullable = false)
     private Test test;
 
     @Column(nullable = false)
