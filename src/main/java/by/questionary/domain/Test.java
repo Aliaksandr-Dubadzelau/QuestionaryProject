@@ -1,6 +1,5 @@
 package by.questionary.domain;
 
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
@@ -12,7 +11,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "test")
-@Data(staticConstructor = "of")
 @ToString(includeFieldNames = false)
 @NoArgsConstructor
 public class Test {

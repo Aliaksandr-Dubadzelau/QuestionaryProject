@@ -1,8 +1,8 @@
 package by.questionary.domain;
 
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,11 +16,9 @@ import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "users",
-        uniqueConstraints = {@UniqueConstraint(columnNames = {"email", "name", "activationCode"})})
-@Data(staticConstructor = "of")
+@Table(name = "users")
+@Data
 @ToString(includeFieldNames = false)
-@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id
@@ -28,13 +26,13 @@ public class User implements UserDetails {
     @Column(unique = true)
     private long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "Please, fill the field name")
     @Length(min = 3, max = 50, message = "Name is wrong (3-50)")
     private String name;
 
     @Email
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     @NotBlank(message = "Please, fill the field email")
     @Length(min = 3, max = 70, message = "Email is wrong (3-70)")
     private String email;
@@ -53,7 +51,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private int passwordCode;
 
-    @Column(nullable = false)
+    @Column(nullable = true, unique = true)
     private String activationCode;
 
     @Column(nullable = false)

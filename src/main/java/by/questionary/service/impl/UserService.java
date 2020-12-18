@@ -1,5 +1,6 @@
 package by.questionary.service.impl;
 
+import by.questionary.domain.User;
 import by.questionary.repository.UserRepository;
 import by.questionary.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,13 @@ public class UserService implements UserServiceInterface, UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    public Iterable<User> getUsers(){
+        return userRepository.findAll();
+    }
+
     @Override
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         return userRepository.findByName(name);
     }
+
 }

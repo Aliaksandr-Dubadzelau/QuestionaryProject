@@ -1,6 +1,5 @@
 package by.questionary.domain;
 
-import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -9,7 +8,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "test_result")
-@Data(staticConstructor = "of")
 @ToString(includeFieldNames = false)
 @NoArgsConstructor
 public class TestResult {
