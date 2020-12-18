@@ -1,6 +1,7 @@
 package by.questionary.domain;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.validator.constraints.Length;
@@ -19,6 +20,7 @@ import java.util.Set;
 @Table(name = "users")
 @Data
 @ToString(includeFieldNames = false)
+@NoArgsConstructor
 public class User implements UserDetails {
 
     @Id

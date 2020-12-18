@@ -1,5 +1,6 @@
 package by.questionary.domain;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "answer")
+@Data
 @ToString(includeFieldNames = false)
 @NoArgsConstructor
 //@RequiredArgsConstructor - для конструктора с файнал полями

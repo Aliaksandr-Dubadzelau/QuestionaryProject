@@ -1,5 +1,6 @@
 package by.questionary.domain;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -7,6 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "test_specialization")
+@Data
 @ToString(includeFieldNames = false)
 @NoArgsConstructor
 public class TestSpecialization {
