@@ -23,6 +23,7 @@
         <hibernate.validatior.version>6.1.5.Final</hibernate.validatior.version>
         <spring.security.version>5.3.3.RELEASE</spring.security.version>
         <lombok.version>1.18.12</lombok.version>
+        <jwt.version>0.9.1</jwt.version>
     </properties>
 
     <parent>
@@ -122,6 +123,12 @@
             <artifactId>spring-security-test</artifactId>
             <version>${spring.security.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jwt.version}</version>
         </dependency>
 
         <dependency>
