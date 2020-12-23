@@ -12,8 +12,6 @@ import javax.persistence.*;
 @Data
 @ToString(includeFieldNames = false)
 @NoArgsConstructor
-//@RequiredArgsConstructor - для конструктора с файнал полями
-//@AllArgsConstructor - для конструктора со всеми полями
 public class Answer {
 
     @Id
