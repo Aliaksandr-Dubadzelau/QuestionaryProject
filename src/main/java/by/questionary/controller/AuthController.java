@@ -17,6 +17,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -25,7 +26,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("authentication")
+@RequestMapping("/authentication")
 @AllArgsConstructor
 @Slf4j
 public class AuthController {
@@ -79,8 +80,13 @@ public class AuthController {
 
         log.info("/signUp signUpRequest - {}", signUpRequest);
 
-        boolean existedUserByName = userServiceImpl.existsUserByName(signUpRequest.getName());
-        boolean existedUserByEmail = userServiceImpl.existsUserByEmail(signUpRequest.getEmail());
+        String signUpUserName = signUpRequest.getName();
+        String signUpUserEmail = signUpRequest.getEmail();
+        String signUpUserPassword = signUpRequest.getPassword();
+        String signUpUserRepeatedPassword = signUpRequest.getRepeatedPassword();
+
+        boolean existedUserByName = userServiceImpl.existsUserByName(signUpUserName);
+        boolean existedUserByEmail = userServiceImpl.existsUserByEmail(signUpUserEmail);
 
         if (existedUserByName) {
 
@@ -98,6 +104,15 @@ public class AuthController {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
+        }
+
+        if (userServiceImpl.comparePasswords(signUpUserPassword, signUpUserRepeatedPassword)) {
+
+            log.warn("signUpRequest - {}. Passwords are different", signUpRequest);
+
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Passwords mustn't be different!"));
         }
 
         User user = userServiceImpl.createUserByRequest(signUpRequest);

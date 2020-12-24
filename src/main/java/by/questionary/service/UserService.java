@@ -11,4 +11,6 @@ public interface UserService {
 
     boolean activateUser(String code);
 
+    boolean comparePasswords(String password, String repeatedPassword);
+
 }

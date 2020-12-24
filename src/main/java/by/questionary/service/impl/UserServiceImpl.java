@@ -43,6 +43,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public boolean comparePasswords(String password, String repeatedPassword){
+        return password.equals(repeatedPassword);
+    }
+
+    @Override
     public User createUserByRequest(SignupRequest signupRequest) {
 
         User user = new User();
