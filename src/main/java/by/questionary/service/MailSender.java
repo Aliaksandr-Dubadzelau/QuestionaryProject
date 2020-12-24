@@ -2,10 +2,12 @@ package by.questionary.service;
 
 import by.questionary.domain.User;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface MailSender {
 
-    void sendActivationMail(User user);
+    CompletableFuture<Boolean> sendActivationMail(User user);
 
-    void sendPasswordResetMail(User user);
+    CompletableFuture<Boolean> sendPasswordResetMail(User user);
 
 }

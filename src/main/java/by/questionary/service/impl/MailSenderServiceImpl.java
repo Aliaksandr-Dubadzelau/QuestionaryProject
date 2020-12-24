@@ -8,13 +8,18 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
 public class MailSenderServiceImpl implements MailSender {
 
     private static final String ACTIVATION_MAIL_SUBJECT = "Activation code";
-    private static final String PASSWORD_RESET__MAIL_SUBJECT = "Password reset code code";
+    private static final String PASSWORD_RESET_MAIL_SUBJECT = "Password reset code code";
+    private static final boolean ADDED = true;
+    private static final boolean NOT_ADDED = false;
 
     @Value("${spring.mail.username}")
     private String username;
@@ -29,8 +34,6 @@ public class MailSenderServiceImpl implements MailSender {
 
     private void send(String mailTo, String subject, String message) {
 
-        log.info("Mail has been sent");
-
         SimpleMailMessage mailMessage = new SimpleMailMessage();
 
         mailMessage.setFrom(username);
@@ -38,30 +41,46 @@ public class MailSenderServiceImpl implements MailSender {
         mailMessage.setSubject(subject);
         mailMessage.setText(message);
 
+        log.info("Mail {} has been sent", mailMessage);
+
         mailSender.send(mailMessage);
     }
 
     @Async
     @Override
-    public void sendActivationMail(User user) {
+    public CompletableFuture<Boolean> sendActivationMail(User user) {
+
+        boolean result = NOT_ADDED;
 
         String message = messageCreatorServiceImpl.createActivationEmailMessage(user);
         String userEmail = user.getEmail();
 
         log.info("Data {}, {} for mail(activation) is created", message, userEmail);
 
-        send(userEmail, ACTIVATION_MAIL_SUBJECT, message);
+        if (!StringUtils.isEmpty(userEmail)) {
+            send(userEmail, ACTIVATION_MAIL_SUBJECT, message);
+            result = ADDED;
+        }
+
+        return CompletableFuture.completedFuture(result);
     }
 
     @Async
     @Override
-    public void sendPasswordResetMail(User user) {
+    public CompletableFuture<Boolean>  sendPasswordResetMail(User user) {
+
+        boolean result = NOT_ADDED;
 
         String message = messageCreatorServiceImpl.createPasswordResetMessage(user);
         String userEmail = user.getEmail();
 
         log.info("Data {}, {} for mail(reset password) is created", message, userEmail);
 
-        send(userEmail, PASSWORD_RESET__MAIL_SUBJECT, message);
+        if (!StringUtils.isEmpty(userEmail)) {
+            send(userEmail, PASSWORD_RESET_MAIL_SUBJECT, message);
+            result = ADDED;
+        }
+
+        return CompletableFuture.completedFuture(result);
     }
 }
