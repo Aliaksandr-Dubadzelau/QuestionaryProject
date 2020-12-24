@@ -9,10 +9,10 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class LoginRequest {
 
-    @NotBlank
+    @NotBlank(message = "Field name is empty")
     private String name;
 
-    @NotBlank
+    @NotBlank(message = "Field password is empty")
     private String password;
 
 }
