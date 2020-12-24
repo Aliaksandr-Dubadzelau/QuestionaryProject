@@ -1,7 +1,11 @@
 package by.questionary.service;
 
+import by.questionary.domain.User;
+
 public interface MailSender {
 
-    void send(String mailTo, String subject, String message);
+    void sendActivationMail(User user);
+
+    void sendPasswordResetMail(User user);
 
 }

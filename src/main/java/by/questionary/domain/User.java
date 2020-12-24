@@ -46,7 +46,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private int passwordCode;
 
     @Column(nullable = true, unique = true)

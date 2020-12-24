@@ -7,6 +7,7 @@ import by.questionary.security.payload.request.LoginRequest;
 import by.questionary.security.payload.request.SignupRequest;
 import by.questionary.security.payload.response.JwtResponse;
 import by.questionary.security.payload.response.MessageResponse;
+import by.questionary.service.impl.MailSenderServiceImpl;
 import by.questionary.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final MailSenderServiceImpl mailSenderServiceImpl;
     private final UserServiceImpl userServiceImpl;
     private final JwtUtils jwtUtils;
 
@@ -77,30 +79,34 @@ public class AuthController {
 
         log.info("/signUp signUpRequest - {}", signUpRequest);
 
-        ResponseEntity<MessageResponse> response = ResponseEntity.ok(new MessageResponse("User registered successfully!"));
-
         boolean existedUserByName = userServiceImpl.existsUserByName(signUpRequest.getName());
         boolean existedUserByEmail = userServiceImpl.existsUserByEmail(signUpRequest.getEmail());
 
         if (existedUserByName) {
-            response = ResponseEntity
+
+            log.warn("signUpRequest - {}. User with the same name is existed", signUpRequest);
+
+            return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
-            log.warn("signUpRequest - {}, response - {}", signUpRequest, response);
         }
 
         if (existedUserByEmail) {
-            response = ResponseEntity
+
+            log.warn("signUpRequest - {}. User with the same email is existed", signUpRequest);
+
+            return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
-            log.warn("signUpRequest - {}, response - {}", signUpRequest, response);
         }
 
-        User user = userServiceImpl.createUser(signUpRequest);
-        userServiceImpl.addUser(user);
+        User user = userServiceImpl.createUserByRequest(signUpRequest);
+        userServiceImpl.prepareUserToSaving(user);
+        userServiceImpl.saveUser(user);
+        mailSenderServiceImpl.sendActivationMail(user);
 
-        log.info("loginRequest - {}, jwtResponse - {}", signUpRequest, response);
+        log.info("loginRequest - {}. User has been saved", signUpRequest);
 
-        return response;
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 }

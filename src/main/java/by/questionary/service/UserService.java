@@ -5,9 +5,9 @@ import by.questionary.security.payload.request.SignupRequest;
 
 public interface UserService {
 
-    boolean addUser(User user);
+    User createUserByRequest(SignupRequest signupRequest);
 
-    User createUser(SignupRequest signupRequest);
+    User prepareUserToSaving(User user);
 
     boolean activateUser(String code);
 
