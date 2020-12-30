@@ -17,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -41,20 +40,20 @@ public class AuthController {
             @Valid
             @RequestBody LoginRequest loginRequest) {
 
-        log.info("/signIn loginRequest - {}", loginRequest);
+        log.info("New SignIn request");
 
         String loginName = loginRequest.getName();
         String loginPassword = loginRequest.getPassword();
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(loginName, loginPassword);
 
-        log.info("loginRequest - {}, token - {}", loginRequest, token);
+        log.info("Token is created - {}", token);
 
         Authentication authentication = authenticationManager.authenticate(token);
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 
-        log.info("loginRequest - {}, jwt - {}", loginRequest, jwt);
+        log.info("JWT is created - {}", jwt);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
 
@@ -66,9 +65,9 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
-        JwtResponse jwtResponse = new JwtResponse(jwt, id, name, email, activated, roles);
+        JwtResponse jwtResponse = new JwtResponse(jwt, id, email, name, activated, roles);
 
-        log.info("loginRequest - {}, jwtResponse - {}", loginRequest, jwtResponse);
+        log.info("JWT response is sent");
 
         return ResponseEntity.ok(jwtResponse);
     }
@@ -78,7 +77,7 @@ public class AuthController {
             @Valid
             @RequestBody SignupRequest signUpRequest) {
 
-        log.info("/signUp signUpRequest - {}", signUpRequest);
+        log.info("New SignUp request");
 
         String signUpUserName = signUpRequest.getName();
         String signUpUserEmail = signUpRequest.getEmail();
@@ -90,7 +89,7 @@ public class AuthController {
 
         if (existedUserByName) {
 
-            log.warn("signUpRequest - {}. User with the same name is existed", signUpRequest);
+            log.warn("User with the same name is existed. Name - {}", signUpRequest.getName());
 
             return ResponseEntity
                     .badRequest()
@@ -99,16 +98,16 @@ public class AuthController {
 
         if (existedUserByEmail) {
 
-            log.warn("signUpRequest - {}. User with the same email is existed", signUpRequest);
+            log.warn("User with the same email is existed. Email - {}", signUpRequest.getEmail());
 
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        if (userServiceImpl.comparePasswords(signUpUserPassword, signUpUserRepeatedPassword)) {
+        if (!userServiceImpl.comparePasswords(signUpUserPassword, signUpUserRepeatedPassword)) {
 
-            log.warn("signUpRequest - {}. Passwords are different", signUpRequest);
+            log.warn("Passwords are different");
 
             return ResponseEntity
                     .badRequest()
@@ -120,8 +119,30 @@ public class AuthController {
         userServiceImpl.saveUser(user);
         mailSenderServiceImpl.sendActivationMail(user);
 
-        log.info("loginRequest - {}. User has been saved", signUpRequest);
+        log.info("User \" {} \" has been saved", signUpRequest.getName());
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+
+    @GetMapping("/activate/{code}")
+    public ResponseEntity<MessageResponse> activate(
+            @PathVariable String code) {
+
+        log.info("New Activation request. Code - {}", code);
+
+        boolean activated = userServiceImpl.activateUser(code);
+
+        if (activated){
+            return ResponseEntity.ok(new MessageResponse("User activated successfully !"));
+        }
+
+        return ResponseEntity
+                .badRequest()
+                .body(new MessageResponse("Activation code is not found!"));
+    }
+
+//    @PostMapping("/resetPassword")
+//    public
+//
+//    @PostMapping("")
 }

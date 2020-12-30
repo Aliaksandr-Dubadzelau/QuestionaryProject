@@ -3,6 +3,7 @@ package by.questionary.config;
 import by.questionary.security.jwt.AuthEntryPointJwt;
 import by.questionary.security.jwt.AuthTokenFilter;
 import by.questionary.security.service.UserDetailsServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@AllArgsConstructor
 public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Bean
@@ -35,14 +37,6 @@ public class WebSecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPointJwt unauthorizedHandler;
     private final AuthTokenFilter authTokenFilter;
-
-    public WebSecurityConfiguration(UserDetailsServiceImpl userDetailsService,
-                                    AuthEntryPointJwt unauthorizedHandler,
-                                    AuthTokenFilter authTokenFilter) {
-        this.userDetailsService = userDetailsService;
-        this.unauthorizedHandler = unauthorizedHandler;
-        this.authTokenFilter = authTokenFilter;
-    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

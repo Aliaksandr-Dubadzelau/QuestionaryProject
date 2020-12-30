@@ -25,19 +25,19 @@ public class User {
     private long id;
 
     @Column(nullable = false, unique = true)
-    @NotBlank(message = "Please, fill the field name")
-    @Length(min = 3, max = 50, message = "Name is wrong (3-50)")
+    @NotBlank
+    @Length(min = 3, max = 50)
     private String name;
 
     @Email
     @Column(nullable = false, unique = true)
-    @NotBlank(message = "Please, fill the field email")
-    @Length(min = 3, max = 70, message = "Email is wrong (3-70)")
+    @NotBlank
+    @Length(min = 3, max = 70)
     private String email;
 
     @Column(nullable = false)
-    @NotBlank(message = "Please, fill the field password")
-    @Length(min = 6, max = 50, message = "Password is wrong (6-50)")
+    @NotBlank
+    @Length(max = 150)
     private String password;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)

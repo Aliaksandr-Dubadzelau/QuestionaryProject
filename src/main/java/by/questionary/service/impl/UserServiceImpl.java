@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -37,13 +38,13 @@ public class UserServiceImpl implements UserService {
 
     public User saveUser(User user) {
 
-        log.info("User {} is saved", user);
+        log.info("User {} is saved", user.getName());
 
         return userRepository.save(user);
     }
 
     @Override
-    public boolean comparePasswords(String password, String repeatedPassword){
+    public boolean comparePasswords(String password, String repeatedPassword) {
         return password.equals(repeatedPassword);
     }
 
@@ -60,7 +61,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userEmail);
         user.setPassword(userPassword);
 
-        log.info("User {} is created", user);
+        log.info("User {} is created", user.getName());
 
         return user;
     }
@@ -75,30 +76,30 @@ public class UserServiceImpl implements UserService {
         user.setRegistrationDate(new Date());
         user.setActivated(NOT_ACTIVATED);
 
+        log.info("User {} is prepared to saving", user.getName());
+
         return user;
     }
 
     @Override
     public boolean activateUser(String code) {
 
-        User user = userRepository.findByActivationCode(code).orElseThrow();
-        boolean activated = ACTIVATED;
+        boolean activated = NOT_ACTIVATED;
 
-        if (user == null) {
-            activated = NOT_ACTIVATED;
-        } else {
-            activate(user);
-            saveUser(user);
+        Optional<User> user = userRepository.findByActivationCode(code);
+
+        if (user.isPresent()) {
+            activate(user.get());
+            saveUser(user.get());
+            activated = ACTIVATED;
         }
 
-        log.info("User {} is activated - {}", user, activated);
+        log.info("Code {} is activated - {}", code, activated);
 
         return activated;
     }
 
     private void activate(User user) {
-
-        log.info("Activate");
 
         user.setActivated(ACTIVATED);
         user.setActivationCode(CONFIRMED_ACTIVATION_CODE);

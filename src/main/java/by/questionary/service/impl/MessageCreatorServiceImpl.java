@@ -13,8 +13,6 @@ public class MessageCreatorServiceImpl implements MessageCreator {
     @Override
     public String createActivationEmailMessage(User user) {
 
-        log.info("New email is created");
-
         String emailMessage = "Something go wrong";
 
         if (user != null && !StringUtils.isEmpty(user.getEmail())) {
@@ -26,12 +24,12 @@ public class MessageCreatorServiceImpl implements MessageCreator {
                     user.getActivationCode());
         }
 
-        log.info("{}", emailMessage);
+        log.info("New activation e-mail is created: {}", emailMessage);
 
         return emailMessage;
 
     }
-
+    
     @Override
     public String createPasswordResetMessage(User user) {
         return null;
