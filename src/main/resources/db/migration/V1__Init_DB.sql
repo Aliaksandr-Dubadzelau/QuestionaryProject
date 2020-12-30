@@ -64,7 +64,7 @@ create table users (
     activation_code varchar(255),
     email varchar(70) not null,
     name varchar(50) not null,
-    password varchar(50) not null,
+    password varchar(150) not null,
     password_code int4,
     registration_date date not null,
     primary key (id)
